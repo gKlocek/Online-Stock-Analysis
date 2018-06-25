@@ -9,7 +9,7 @@ public abstract class NextPoint {
         double y = random.nextDouble() - 0.5;
         y = y*0.1;
         double prevY = prev;
-        y= Math.min(2,Math.max(prevY + y,0));
+        y= Math.min(1,Math.max(prevY + y,0));
         return y;
     }
 }

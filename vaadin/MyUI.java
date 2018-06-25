@@ -12,14 +12,12 @@ import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import static com.vaadin.ArrayLastElement.back;
 import static com.vaadin.NextPoint.getPointY;
 import static com.vaadin.addon.charts.examples.AbstractVaadinChartExample.runWhileAttached;
-import static java.lang.StrictMath.pow;
 
 
 @Theme("mytheme")
@@ -54,8 +52,8 @@ public class MyUI extends UI {
         yAxis.setTitle(new AxisTitle("Value"));
         yAxis.setPlotLines(new PlotLine(0, 1, new SolidColor("#808080")));
 
-        configuration.getTooltip().setEnabled(false);
-        configuration.getLegend().setEnabled(false);
+        configuration.getTooltip().setEnabled(true);
+        configuration.getLegend().setEnabled(true);
 
         series.setPlotOptions(new PlotOptionsSpline());
         series.setName("Random data");
@@ -69,17 +67,12 @@ public class MyUI extends UI {
                 period = 5;
 
             MovingAverage series2 = new SimpleMovingAverage(series,period);
-            series2.SetNextPoint(System.currentTimeMillis(),0.5);
-            double prev = 0.5;
-            series2.SetNextPoint(System.currentTimeMillis() +  1000,getPointY(prev));
-            prev = (double) series2.GetLast().getY();
-            series2.SetNextPoint(System.currentTimeMillis() +  1000,getPointY(prev));
 
+            layout.removeComponent(chart);
             averages.add(series2);
             configuration.addSeries(back(averages).GetDataSeries());
             chart.setConfiguration(configuration);
-            System.out.println("pow test: "+pow(2,10));
-
+            layout.addComponent(chart);
         });
 
         button2.addClickListener(e -> {
@@ -90,19 +83,19 @@ public class MyUI extends UI {
                 period = 5;
 
             MovingAverage series2 = new ExponentialMovingAverage(series,period);
-            series2.SetNextPoint(System.currentTimeMillis(),0.5);
 
+            layout.removeComponent(chart);
             averages.add(series2);
             configuration.addSeries(back(averages).GetDataSeries());
             chart.setConfiguration(configuration);
-
+            layout.addComponent(chart);
         });
 
         double prev = 0.5;
         for (int i = -50; i <= 0; i++) {
             final double y = getPointY(prev);
             series.add(new DataSeriesItem(
-                    System.currentTimeMillis() + i * 1000, y),true,false);
+                    System.currentTimeMillis() + i * 1000, y));
             prev = (double) back(series).getY();
         }
         long start = System.currentTimeMillis();
@@ -113,13 +106,15 @@ public class MyUI extends UI {
                 final long x = System.currentTimeMillis();
                 final double y = getPointY(prev);
                 timeTick +=1;
-                boolean shift= false;
-                if(x > start + 200000)
-                    shift = true;
-                series.add(new DataSeriesItem(x, y), true, shift);
-                for (MovingAverage it : averages) {
-                    final double z = (double) back(series).getY();
-                    it.SetNextPoint(x,z);
+
+                series.add(new DataSeriesItem(x, y), true, false);
+                final double z = (double) back(series).getY();
+                try {
+                    for (MovingAverage it : averages) {
+                        it.SetNextPoint(x,z);
+                    }
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
                 }
             }
         }, 1000, 1000);

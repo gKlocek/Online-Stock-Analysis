@@ -12,7 +12,9 @@ import static java.lang.StrictMath.pow;
 
 
 public class ExponentialMovingAverage extends MovingAverage {
-    public ExponentialMovingAverage(ArrayList<Double> yPoint) {
+
+    public ExponentialMovingAverage(DataSeries series, int range) {
+        ArrayList<Double> yPoint = GetYList(series,range);
         acc = MyUI.timeTick;
         acc = max(acc-yPoint.size(),0);
         pointsYqueue = new LinkedList<>();
@@ -21,10 +23,8 @@ public class ExponentialMovingAverage extends MovingAverage {
         }
         data = new DataSeries();
         accRes = pointsYqueue.getLast();
-    }
-
-    public ExponentialMovingAverage(DataSeries series, int range) {
-        this(GetYList(series,range));
+        SetName("Exponential");
+        System.out.println("Series: " + data.getName() + " done");
     }
 
     @Override
@@ -36,7 +36,6 @@ public class ExponentialMovingAverage extends MovingAverage {
         double den = 0;
         int i =0;
         double a;
-        System.out.println("queue size: " + pointsYqueue.size() + "acc: " + acc);
         for (double it : pointsYqueue) {
             a = 1/((acc + i)+1);
             num += pow((1-a),pointsYqueue.size()-1-i)*it;
@@ -45,4 +44,5 @@ public class ExponentialMovingAverage extends MovingAverage {
         }
         return num/den;
     }
+
 }

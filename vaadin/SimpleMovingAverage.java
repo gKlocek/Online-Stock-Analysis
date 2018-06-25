@@ -24,10 +24,23 @@ public class SimpleMovingAverage extends MovingAverage {
         }
         accRes = accRes/(double) yList.size();
         data = new DataSeries();
+        SetName("Simple");
     }
 
     public SimpleMovingAverage(DataSeries series,int n) {
-        this(GetYList(series,n));
+        //this(GetYList(series,n));
+        ArrayList<Double> yList = GetYList(series,n);
+        accRes = 0;
+        pointsYqueue = new LinkedList<>();
+        for (double it : yList) {
+            pointsYqueue.addLast(it);
+            accRes += it;
+        }
+        accRes = accRes/(double) yList.size();
+        data = new DataSeries();
+        SetName("Simple");
+
+        System.out.println("Series: " + data.getName() + " done");
     }
 
     @Override

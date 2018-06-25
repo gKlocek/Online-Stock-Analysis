@@ -3,6 +3,7 @@ package com.vaadin;
 import com.vaadin.addon.charts.model.DataSeries;
 import com.vaadin.addon.charts.model.DataSeriesItem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ public abstract class MovingAverage {
     double accRes;
     void SetNextPoint(long x,double y) {
         pointsYqueue.addFirst(y);
+        //double nextY = getPointY(y);
         double nextY = Calc(y);
         data.add(new DataSeriesItem(x,nextY),true,false);
     }
@@ -34,5 +36,10 @@ public abstract class MovingAverage {
 
     DataSeriesItem GetLast() {
         return back(data);
+    }
+
+    void SetName(String averageType) {
+        String period = Integer.toString(pointsYqueue.size());
+        data.setName(averageType + " " + period);
     }
 }
