@@ -1,7 +1,6 @@
 package com.vaadin;
 
-import com.vaadin.addon.charts.model.DataSeries;
-import com.vaadin.addon.charts.model.DataSeriesItem;
+import com.vaadin.addon.charts.model.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -15,17 +14,6 @@ import static java.util.Collections.reverse;
 
 
 public class SimpleMovingAverage extends MovingAverage {
-    public SimpleMovingAverage(ArrayList<Double> yList) {
-        accRes = 0;
-        pointsYqueue = new LinkedList<>();
-        for (double it : yList) {
-            pointsYqueue.addLast(it);
-            accRes += it;
-        }
-        accRes = accRes/(double) yList.size();
-        data = new DataSeries();
-        SetName("Simple");
-    }
 
     public SimpleMovingAverage(DataSeries series,int n) {
         //this(GetYList(series,n));
@@ -39,8 +27,7 @@ public class SimpleMovingAverage extends MovingAverage {
         accRes = accRes/(double) yList.size();
         data = new DataSeries();
         SetName("Simple");
-
-        System.out.println("Series: " + data.getName() + " done");
+        SetPlotOptions();
     }
 
     @Override
@@ -51,5 +38,13 @@ public class SimpleMovingAverage extends MovingAverage {
 
         double res = accRes;
         return res;
+    }
+
+    //@Override
+    public void SetPlotOptions(){
+        opt = new PlotOptionsLine();
+        opt.setDataLabels(new DataLabels(false));
+        opt.setDashStyle(DashStyle.SHORTDASHDOTDOT);
+        data.setPlotOptions(opt);
     }
 }

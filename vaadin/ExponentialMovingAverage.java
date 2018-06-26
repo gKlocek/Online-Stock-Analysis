@@ -1,6 +1,9 @@
 package com.vaadin;
 
+import com.vaadin.addon.charts.model.DashStyle;
+import com.vaadin.addon.charts.model.DataLabels;
 import com.vaadin.addon.charts.model.DataSeries;
+import com.vaadin.addon.charts.model.PlotOptionsLine;
 
 import java.util.*;
 
@@ -24,7 +27,8 @@ public class ExponentialMovingAverage extends MovingAverage {
         data = new DataSeries();
         accRes = pointsYqueue.getLast();
         SetName("Exponential");
-        System.out.println("Series: " + data.getName() + " done");
+        //System.out.println("Series: " + data.getName() + " done");
+        SetPlotOptions();
     }
 
     @Override
@@ -43,6 +47,14 @@ public class ExponentialMovingAverage extends MovingAverage {
             i++;
         }
         return num/den;
+    }
+
+    //@Override
+    public void SetPlotOptions(){
+        opt = new PlotOptionsLine();
+        opt.setDataLabels(new DataLabels(false));
+        opt.setDashStyle(DashStyle.DASHDOT);
+        data.setPlotOptions(opt);
     }
 
 }
